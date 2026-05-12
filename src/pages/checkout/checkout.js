@@ -209,12 +209,23 @@ function setLoading(isLoading) {
 
 async function submitToNetlify(paymentIntentId, paymentStatus) {
   const formData = new FormData(checkoutForm);
+
+  // Order metadata
+  const price = parseFloat(productData?.price || 0);
+  const total = (currentQuantity * price).toFixed(2);
+
+  formData.set("form-name",            "checkout");
   formData.set("stripe-transaction-id", paymentIntentId);
-  formData.set("stripe-status", paymentStatus);
-  formData.set("form-name", "checkout");
+  formData.set("stripe-status",         paymentStatus);
+  formData.set("product-name",          productData?.title || "");
+  formData.set("product-qty",           String(currentQuantity));
+  formData.set("total-price",           total);
 
   try {
-    const response = await fetch(window.location.pathname, {
+    // Post to the static stub so Netlify's registered form receives the data.
+    // The checkout page is SSR (prerender=false) so Netlify never scans it;
+    // the stub in public/ is what Netlify discovered at build time.
+    const response = await fetch("/checkout-form-stub.html", {
       method:  "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body:    new URLSearchParams(formData).toString(),
@@ -222,6 +233,8 @@ async function submitToNetlify(paymentIntentId, paymentStatus) {
 
     if (!response.ok) {
       console.error("Netlify submission failed:", response.status);
+    } else {
+      console.log("Order submitted to Netlify Forms ✓");
     }
   } catch (err) {
     console.error("Netlify submission error:", err);
