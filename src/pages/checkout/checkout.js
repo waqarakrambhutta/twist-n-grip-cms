@@ -63,24 +63,34 @@ function renderOrderItems() {
     const row = document.createElement("div");
     row.className = "checkout-item-row";
     row.innerHTML = `
-      <img
-        src="${item.image}"
-        alt="${item.title}"
-        class="checkout-item-img"
-        onerror="this.style.background='#f2f2f2'"
-      />
-      <div class="checkout-item-info">
-        <p class="checkout-item-title">${item.title}</p>
-        <p class="checkout-item-unit-price">$${parseFloat(item.price).toFixed(2)} each</p>
+      <!-- Thumbnail -->
+      <div class="co-item-thumb">
+        <img
+          src="${item.image}"
+          alt="${item.title}"
+          onerror="this.style.opacity='0'"
+        />
       </div>
-      <div class="checkout-item-right">
-        <span class="checkout-item-line-price" data-line-index="${index}">$${lineTotal}</span>
-        <div class="checkout-qty-controls">
-          <button class="checkout-qty-btn co-dec-btn" data-index="${index}" aria-label="Decrease">−</button>
-          <span class="checkout-qty-val" data-qty-display="${index}">${item.quantity}</span>
-          <button class="checkout-qty-btn co-inc-btn" data-index="${index}" aria-label="Increase">+</button>
-        </div>
+
+      <!-- Title + unit price -->
+      <div class="co-item-info">
+        <p class="co-item-title">${item.title}</p>
+        <p class="co-item-unit">$${parseFloat(item.price).toFixed(2)} <span>each</span></p>
       </div>
+
+      <!-- Qty stepper -->
+      <div class="co-qty-wrap">
+        <button class="co-qty-btn co-dec-btn" data-index="${index}" aria-label="Decrease">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/></svg>
+        </button>
+        <span class="co-qty-num">${item.quantity}</span>
+        <button class="co-qty-btn co-inc-btn" data-index="${index}" aria-label="Increase">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        </button>
+      </div>
+
+      <!-- Line total -->
+      <div class="co-line-price">$${lineTotal}</div>
     `;
     list.appendChild(row);
   });
